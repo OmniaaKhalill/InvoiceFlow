@@ -23,12 +23,12 @@ namespace InvoiceFlow.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Get() =>
-            Ok(await _invoicesRepo.GetAllAsync());
+            Ok(await _invoicesRepo.GetAllWithDetailsAsync());
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var invoice = await _invoicesRepo.GetAsync(id);
+            var invoice = await _invoicesRepo.GetWithDetailsAsync(id);
             if (invoice == null) return NotFound();
             return Ok(invoice);
         }
@@ -44,16 +44,16 @@ namespace InvoiceFlow.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(long id, [FromBody] InvoiceHeader invoice)
+        public async Task<IActionResult> Put(long id, [FromBody] UpdateInvoiceHeaderDto invoice)
         {
             if (id != invoice.ID) return BadRequest();
-            var updated = await _invoicesRepo.UpdateAsync(id, invoice);
+            var updatedInvoice = await _invoiceService.UpdateInvoiceAsync(invoice,id);
 
-            if (updated == null)
+            if (updatedInvoice == null)
             {
                 return BadRequest();
             }
-            return Ok(updated);
+            return Ok(updatedInvoice);
         }
 
         [HttpDelete("{id}")]

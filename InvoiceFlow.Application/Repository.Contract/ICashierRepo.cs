@@ -1,4 +1,5 @@
-﻿using InvoiceFlow.Domain.Entities;
+﻿using InvoiceFlow.Application.DTOs.Invoice;
+using InvoiceFlow.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,8 @@ namespace InvoiceFlow.Application.Interfaces
 {
     public interface ICashierRepo : IGenericRepo<Cashier>
     {
+
+        Task<Cashier?> GetWithDetailsAsync(long id);
+        Task<IReadOnlyList<Cashier>> GetAllWithDetailsAsync();
     }
 }

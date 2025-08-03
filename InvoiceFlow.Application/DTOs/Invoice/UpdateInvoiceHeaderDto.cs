@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace InvoiceFlow.Application.DTOs.Invoice
 {
-    public class CreateInvoiceHeaderDto
+    public class UpdateInvoiceHeaderDto
     {
-
+        public long ID { get; set; }
         public string CustomerName { get; set; }
         public long? CashierID { get; set; }
         public long BranchID { get; set; }
         public List<CreateInvoiceDetailDto> InvoiceDetails { get; set; }
-
 
     }
 }

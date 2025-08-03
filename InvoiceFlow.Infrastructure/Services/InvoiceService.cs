@@ -51,9 +51,57 @@ namespace InvoiceFlow.Infrastructure.Services
             }
 
             invoice.TotalPrice = total;
+            invoice.Invoicedate = DateTime.Now;
 
             return await _invoiceRepo.AddAsync(invoice);
         }
-    }
 
+
+        public async Task<InvoiceHeader?> UpdateInvoiceAsync(UpdateInvoiceHeaderDto dto, long id)
+        {
+            if (dto.InvoiceDetails == null || !dto.InvoiceDetails.Any())
+                return null;
+
+            var existingInvoice = await _invoiceRepo.GetWithDetailsAsync(id); 
+            if (existingInvoice == null)
+                return new InvoiceHeader { ID = 0 };
+
+            double total = 0;
+
+            foreach (var detailDto in dto.InvoiceDetails)
+            {
+                var item = await _itemRepo.GetAsync(detailDto.ItemID);
+                if (item == null)
+                    return null;
+
+                var existingDetail = existingInvoice.InvoiceDetails
+                    .FirstOrDefault(d => d.ItemID == detailDto.ItemID);
+
+                if (existingDetail != null)
+                {
+                    existingDetail.ItemCount = detailDto.ItemCount;
+                }
+                else
+                {
+                    existingInvoice.InvoiceDetails.Add(new InvoiceDetail
+                    {
+                        ItemID = item.ID,
+                        ItemCount = detailDto.ItemCount
+                    });
+                }
+
+                total += item.Price * detailDto.ItemCount;
+            }
+
+            existingInvoice.TotalPrice = total;
+            existingInvoice.Invoicedate = DateTime.Now;
+            existingInvoice.CustomerName = dto.CustomerName;
+
+            return await _invoiceRepo.UpdateAsync(id, existingInvoice);
+        }
+
+
+
+    }
 }
+

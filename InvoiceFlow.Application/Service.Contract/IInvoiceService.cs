@@ -11,6 +11,6 @@ namespace InvoiceFlow.Application.Service.Contract
     public interface IInvoiceService
     {
         Task<InvoiceHeader?> CreateInvoiceAsync(CreateInvoiceHeaderDto dto);
-    }
+        Task<InvoiceHeader?> UpdateInvoiceAsync(UpdateInvoiceHeaderDto dto, long id);
 
-}
+} }

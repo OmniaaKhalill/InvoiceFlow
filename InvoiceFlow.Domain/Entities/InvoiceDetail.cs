@@ -11,7 +11,7 @@ namespace InvoiceFlow.Domain.Entities
 
         public long InvoiceHeaderID { get; set; }
         public long ItemID { get; set; }
-        public double ItemCount { get; set; }
+        public int ItemCount { get; set; }
 
         public InvoiceHeader InvoiceHeader { get; set; }
         public Item Item { get; set; }
