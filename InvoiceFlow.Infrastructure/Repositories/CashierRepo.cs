@@ -34,6 +34,7 @@ namespace InvoiceFlow.Infrastructure.Repositories
         {
             return await _dbcontext.Cashiers 
                 .Include(i => i.Branch)
+                  .ThenInclude(b => b.City)
                 .Where(i => i.IsDeleted == false)
                 
                 .ToListAsync();
