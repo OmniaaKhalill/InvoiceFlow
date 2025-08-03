@@ -1,7 +1,10 @@
 using InvoiceFlow.Application.Helpers;
 using InvoiceFlow.Application.Interfaces;
+using InvoiceFlow.Application.Service.Contract;
+using InvoiceFlow.Domain.Entities;
 using InvoiceFlow.Infrastructure;
 using InvoiceFlow.Infrastructure.Repositories;
+using InvoiceFlow.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +19,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 builder.Services.AddScoped<ICashierRepo, CashierRepo>();
+builder.Services.AddScoped<IItemRepo, ItemRepo>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
 
 
 

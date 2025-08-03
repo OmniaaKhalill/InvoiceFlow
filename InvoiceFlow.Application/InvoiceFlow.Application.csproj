@@ -15,8 +15,4 @@
     <ProjectReference Include="..\InvoiceFlow.Domain\InvoiceFlow.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\InvoiceItem\" />
-  </ItemGroup>
-
 </Project>

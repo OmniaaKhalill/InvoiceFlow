@@ -1,5 +1,7 @@
 ﻿
+using InvoiceFlow.Application.DTOs.Invoice;
 using InvoiceFlow.Application.Interfaces;
+using InvoiceFlow.Application.Service.Contract;
 using InvoiceFlow.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +13,12 @@ namespace InvoiceFlow.API.Controllers
     public class InvoicesController : ControllerBase
     {
         private readonly IInvoiceRepo _invoicesRepo;
+        private readonly IInvoiceService _invoiceService;
 
-        public InvoicesController(IInvoiceRepo invoicesRepo)
+        public InvoicesController(IInvoiceRepo invoicesRepo , IInvoiceService invoiceService)
         {
-            _invoicesRepo =invoicesRepo;
+            _invoicesRepo = invoicesRepo;
+            _invoiceService = invoiceService;
         }
 
         [HttpGet]
@@ -30,16 +34,13 @@ namespace InvoiceFlow.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] InvoiceHeader invoice)
+        public async Task<IActionResult> Post([FromBody] CreateInvoiceHeaderDto dto)
         {
-    
-            var created = await _invoicesRepo.AddAsync(invoice);
+            var createdInvoice = await _invoiceService.CreateInvoiceAsync(dto);
+            if (createdInvoice == null)
+                return BadRequest("Invalid invoice data or items not found.");
 
-            if (created == null)
-            {
-                return BadRequest();
-            }
-            return Ok(created);
+            return Ok(createdInvoice);
         }
 
         [HttpPut("{id}")]
