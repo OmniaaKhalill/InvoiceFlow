@@ -4,14 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoiceFlow.Domain.Entities
+namespace InvoiceFlow.Application.DTOs.Cashier
 {
-    public class Cashier : BaseEntity
+    public class CashierCreateDto
     {
-       
         public string CashierName { get; set; }
         public long BranchID { get; set; }
-        public Branch Branch { get; set; }
-        public ICollection<InvoiceHeader> InvoiceHeaders { get; set; }
     }
 }

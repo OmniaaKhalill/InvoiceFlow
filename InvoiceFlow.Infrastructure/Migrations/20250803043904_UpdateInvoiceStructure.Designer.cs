@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250802122021_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250803043904_UpdateInvoiceStructure")]
+    partial class UpdateInvoiceStructure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,18 +27,21 @@ namespace InvoiceFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.Branch", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<string>("BranchName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CityID")
-                        .HasColumnType("int");
+                    b.Property<long>("CityID")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -49,56 +52,65 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            ID = 2,
-                            BranchName = "فرع الحي السابع",
-                            CityID = 1
-                        },
-                        new
-                        {
-                            ID = 3,
-                            BranchName = "فرع عباس العقاد",
-                            CityID = 1
-                        },
-                        new
-                        {
-                            ID = 4,
-                            BranchName = "فرع التجمع الاول",
-                            CityID = 2
-                        },
-                        new
-                        {
-                            ID = 5,
-                            BranchName = "فرع سموحه",
-                            CityID = 5
-                        },
-                        new
-                        {
-                            ID = 6,
-                            BranchName = "فرع الشروق",
-                            CityID = 3
-                        },
-                        new
-                        {
-                            ID = 7,
+                            ID = 1L,
                             BranchName = "فرع العبور",
-                            CityID = 4
+                            CityID = 4L,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 2L,
+                            BranchName = "فرع الحي السابع",
+                            CityID = 1L,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 3L,
+                            BranchName = "فرع عباس العقاد",
+                            CityID = 1L,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 4L,
+                            BranchName = "فرع التجمع الاول",
+                            CityID = 2L,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 5L,
+                            BranchName = "فرع سموحه",
+                            CityID = 5L,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 6L,
+                            BranchName = "فرع الشروق",
+                            CityID = 3L,
+                            IsDeleted = false
                         });
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.Cashier", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<int>("BranchID")
-                        .HasColumnType("int");
+                    b.Property<long>("BranchID")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CashierName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -109,47 +121,62 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            ID = 1,
-                            BranchID = 2,
-                            CashierName = "محمد احمد"
+                            ID = 1L,
+                            BranchID = 2L,
+                            CashierName = "محمد احمد",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 2,
-                            BranchID = 3,
-                            CashierName = "محمود احمد محمد"
+                            ID = 2L,
+                            BranchID = 3L,
+                            CashierName = "محمود احمد ",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 3,
-                            BranchID = 2,
-                            CashierName = "مصطفي عبد السميع"
+                            ID = 3L,
+                            BranchID = 2L,
+                            CashierName = "مصطفي عبد السميع",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 4,
-                            BranchID = 6,
-                            CashierName = "احمد عبد الرحمن"
+                            ID = 4L,
+                            BranchID = 6L,
+                            CashierName = "احمد عبد الرحمن",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 5,
-                            BranchID = 4,
-                            CashierName = "ساره عبد الله"
+                            ID = 5L,
+                            BranchID = 4L,
+                            CashierName = "ساره عبد الله",
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            ID = 6L,
+                            BranchID = 1L,
+                            CashierName = "ساره محمد ",
+                            IsDeleted = false
                         });
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.City", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<long>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
                     b.Property<string>("CityName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -158,28 +185,33 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            ID = 1,
-                            CityName = "القاهرة - مدينة نصر"
+                            ID = 1L,
+                            CityName = "القاهرة - مدينة نصر",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 2,
-                            CityName = "القاهرة - القاهرة الجديدة "
+                            ID = 2L,
+                            CityName = "القاهرة - القاهرة الجديدة ",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 3,
-                            CityName = "القاهرة - الشروق "
+                            ID = 3L,
+                            CityName = "القاهرة - الشروق ",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 4,
-                            CityName = "القاهرة - العبور "
+                            ID = 4L,
+                            CityName = "القاهرة - العبور ",
+                            IsDeleted = false
                         },
                         new
                         {
-                            ID = 5,
-                            CityName = "الاسكندرية - سموحة"
+                            ID = 5L,
+                            CityName = "الاسكندرية - سموحة",
+                            IsDeleted = false
                         });
                 });
 
@@ -194,19 +226,20 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.Property<long>("InvoiceHeaderID")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<double>("ItemCount")
                         .HasColumnType("float");
 
-                    b.Property<string>("ItemName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("ItemPrice")
-                        .HasColumnType("float");
+                    b.Property<long>("ItemID")
+                        .HasColumnType("bigint");
 
                     b.HasKey("ID");
 
                     b.HasIndex("InvoiceHeaderID");
+
+                    b.HasIndex("ItemID");
 
                     b.ToTable("InvoiceDetails");
 
@@ -215,33 +248,33 @@ namespace InvoiceFlow.Infrastructure.Migrations
                         {
                             ID = 2L,
                             InvoiceHeaderID = 2L,
+                            IsDeleted = false,
                             ItemCount = 2.0,
-                            ItemName = "بيبسي 1 لتر",
-                            ItemPrice = 20.0
+                            ItemID = 1L
                         },
                         new
                         {
                             ID = 3L,
                             InvoiceHeaderID = 2L,
+                            IsDeleted = false,
                             ItemCount = 2.0,
-                            ItemName = "ساندوتش برجر",
-                            ItemPrice = 50.0
+                            ItemID = 2L
                         },
                         new
                         {
                             ID = 4L,
                             InvoiceHeaderID = 2L,
+                            IsDeleted = false,
                             ItemCount = 1.0,
-                            ItemName = "ايس كريم",
-                            ItemPrice = 10.0
+                            ItemID = 3L
                         },
                         new
                         {
                             ID = 6L,
                             InvoiceHeaderID = 3L,
+                            IsDeleted = false,
                             ItemCount = 1.0,
-                            ItemName = "سفن اب كانز",
-                            ItemPrice = 5.0
+                            ItemID = 4L
                         });
                 });
 
@@ -253,11 +286,11 @@ namespace InvoiceFlow.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<int>("BranchID")
-                        .HasColumnType("int");
+                    b.Property<long>("BranchID")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("CashierID")
-                        .HasColumnType("int");
+                    b.Property<long?>("CashierID")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
@@ -265,6 +298,12 @@ namespace InvoiceFlow.Infrastructure.Migrations
 
                     b.Property<DateTime>("Invoicedate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 
@@ -278,18 +317,75 @@ namespace InvoiceFlow.Infrastructure.Migrations
                         new
                         {
                             ID = 2L,
-                            BranchID = 2,
-                            CashierID = 1,
+                            BranchID = 2L,
+                            CashierID = 1L,
                             CustomerName = "محمد عبد الله",
-                            Invoicedate = new DateTime(2022, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Invoicedate = new DateTime(2022, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            TotalPrice = 150.0
                         },
                         new
                         {
                             ID = 3L,
-                            BranchID = 3,
-                            CashierID = 2,
+                            BranchID = 3L,
+                            CashierID = 2L,
                             CustomerName = "محمود احمد",
-                            Invoicedate = new DateTime(2022, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Invoicedate = new DateTime(2022, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            TotalPrice = 5.0
+                        });
+                });
+
+            modelBuilder.Entity("InvoiceFlow.Domain.Entities.Item", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Item");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1L,
+                            IsDeleted = false,
+                            Name = "بيبسي 1 لتر",
+                            Price = 20.0
+                        },
+                        new
+                        {
+                            ID = 2L,
+                            IsDeleted = false,
+                            Name = "ساندوتش برجر",
+                            Price = 50.0
+                        },
+                        new
+                        {
+                            ID = 3L,
+                            IsDeleted = false,
+                            Name = "ايس كريم",
+                            Price = 10.0
+                        },
+                        new
+                        {
+                            ID = 4L,
+                            IsDeleted = false,
+                            Name = "سفن اب كانز",
+                            Price = 5.0
                         });
                 });
 
@@ -323,7 +419,15 @@ namespace InvoiceFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("InvoiceFlow.Domain.Entities.Item", "Item")
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("ItemID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("InvoiceHeader");
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.InvoiceHeader", b =>
@@ -361,6 +465,11 @@ namespace InvoiceFlow.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.InvoiceHeader", b =>
+                {
+                    b.Navigation("InvoiceDetails");
+                });
+
+            modelBuilder.Entity("InvoiceFlow.Domain.Entities.Item", b =>
                 {
                     b.Navigation("InvoiceDetails");
                 });

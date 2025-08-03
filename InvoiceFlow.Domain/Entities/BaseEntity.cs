@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace InvoiceFlow.Domain.Entities
 {
-    public class City : BaseEntity
+    public class BaseEntity
     {
-   
-        public string CityName { get; set; }
-
-        public ICollection<Branch> Branches { get; set; }
+        public long ID { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

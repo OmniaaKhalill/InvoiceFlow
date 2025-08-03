@@ -4,6 +4,7 @@ using InvoiceFlow.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250802205133_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,14 +232,16 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.Property<double>("ItemCount")
                         .HasColumnType("float");
 
-                    b.Property<long>("ItemID")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ItemPrice")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 
                     b.HasIndex("InvoiceHeaderID");
-
-                    b.HasIndex("ItemID");
 
                     b.ToTable("InvoiceDetails");
 
@@ -247,7 +252,8 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             InvoiceHeaderID = 2L,
                             IsDeleted = false,
                             ItemCount = 2.0,
-                            ItemID = 1L
+                            ItemName = "بيبسي 1 لتر",
+                            ItemPrice = 20.0
                         },
                         new
                         {
@@ -255,7 +261,8 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             InvoiceHeaderID = 2L,
                             IsDeleted = false,
                             ItemCount = 2.0,
-                            ItemID = 2L
+                            ItemName = "ساندوتش برجر",
+                            ItemPrice = 50.0
                         },
                         new
                         {
@@ -263,7 +270,8 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             InvoiceHeaderID = 2L,
                             IsDeleted = false,
                             ItemCount = 1.0,
-                            ItemID = 3L
+                            ItemName = "ايس كريم",
+                            ItemPrice = 10.0
                         },
                         new
                         {
@@ -271,7 +279,8 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             InvoiceHeaderID = 3L,
                             IsDeleted = false,
                             ItemCount = 1.0,
-                            ItemID = 4L
+                            ItemName = "سفن اب كانز",
+                            ItemPrice = 5.0
                         });
                 });
 
@@ -299,9 +308,6 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
                     b.HasKey("ID");
 
                     b.HasIndex("BranchID");
@@ -318,8 +324,7 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             CashierID = 1L,
                             CustomerName = "محمد عبد الله",
                             Invoicedate = new DateTime(2022, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            TotalPrice = 150.0
+                            IsDeleted = false
                         },
                         new
                         {
@@ -328,61 +333,7 @@ namespace InvoiceFlow.Infrastructure.Migrations
                             CashierID = 2L,
                             CustomerName = "محمود احمد",
                             Invoicedate = new DateTime(2022, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            TotalPrice = 5.0
-                        });
-                });
-
-            modelBuilder.Entity("InvoiceFlow.Domain.Entities.Item", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Item");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1L,
-                            IsDeleted = false,
-                            Name = "بيبسي 1 لتر",
-                            Price = 20.0
-                        },
-                        new
-                        {
-                            ID = 2L,
-                            IsDeleted = false,
-                            Name = "ساندوتش برجر",
-                            Price = 50.0
-                        },
-                        new
-                        {
-                            ID = 3L,
-                            IsDeleted = false,
-                            Name = "ايس كريم",
-                            Price = 10.0
-                        },
-                        new
-                        {
-                            ID = 4L,
-                            IsDeleted = false,
-                            Name = "سفن اب كانز",
-                            Price = 5.0
+                            IsDeleted = false
                         });
                 });
 
@@ -416,15 +367,7 @@ namespace InvoiceFlow.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceFlow.Domain.Entities.Item", "Item")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("ItemID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("InvoiceHeader");
-
-                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.InvoiceHeader", b =>
@@ -462,11 +405,6 @@ namespace InvoiceFlow.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("InvoiceFlow.Domain.Entities.InvoiceHeader", b =>
-                {
-                    b.Navigation("InvoiceDetails");
-                });
-
-            modelBuilder.Entity("InvoiceFlow.Domain.Entities.Item", b =>
                 {
                     b.Navigation("InvoiceDetails");
                 });

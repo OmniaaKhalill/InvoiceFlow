@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace InvoiceFlow.Domain.Entities
 {
-    public class InvoiceHeader
+    public class InvoiceHeader : BaseEntity
     {
-        public long ID { get; set; }
+
         public string CustomerName { get; set; }
         public DateTime Invoicedate { get; set; }
-        public int? CashierID { get; set; }
-        public int BranchID { get; set; }
+        public long? CashierID { get; set; }
+        public long BranchID { get; set; }
+        public double TotalPrice { get; set; } 
 
         public Cashier Cashier { get; set; }
         public Branch Branch { get; set; }

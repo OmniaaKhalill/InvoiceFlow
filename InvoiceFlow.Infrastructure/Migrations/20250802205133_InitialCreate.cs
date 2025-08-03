@@ -17,9 +17,10 @@ namespace InvoiceFlow.Infrastructure.Migrations
                 name: "Cities",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,10 +31,11 @@ namespace InvoiceFlow.Infrastructure.Migrations
                 name: "Branches",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CityID = table.Column<int>(type: "int", nullable: false)
+                    CityID = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,10 +52,11 @@ namespace InvoiceFlow.Infrastructure.Migrations
                 name: "Cashiers",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CashierName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BranchID = table.Column<int>(type: "int", nullable: false)
+                    BranchID = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,8 +77,9 @@ namespace InvoiceFlow.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Invoicedate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CashierID = table.Column<int>(type: "int", nullable: true),
-                    BranchID = table.Column<int>(type: "int", nullable: false)
+                    CashierID = table.Column<long>(type: "bigint", nullable: true),
+                    BranchID = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -102,7 +106,8 @@ namespace InvoiceFlow.Infrastructure.Migrations
                     InvoiceHeaderID = table.Column<long>(type: "bigint", nullable: false),
                     ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemCount = table.Column<double>(type: "float", nullable: false),
-                    ItemPrice = table.Column<double>(type: "float", nullable: false)
+                    ItemPrice = table.Column<double>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,59 +122,60 @@ namespace InvoiceFlow.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Cities",
-                columns: new[] { "ID", "CityName" },
+                columns: new[] { "ID", "CityName", "IsDeleted" },
                 values: new object[,]
                 {
-                    { 1, "القاهرة - مدينة نصر" },
-                    { 2, "القاهرة - القاهرة الجديدة " },
-                    { 3, "القاهرة - الشروق " },
-                    { 4, "القاهرة - العبور " },
-                    { 5, "الاسكندرية - سموحة" }
+                    { 1L, "القاهرة - مدينة نصر", false },
+                    { 2L, "القاهرة - القاهرة الجديدة ", false },
+                    { 3L, "القاهرة - الشروق ", false },
+                    { 4L, "القاهرة - العبور ", false },
+                    { 5L, "الاسكندرية - سموحة", false }
                 });
 
             migrationBuilder.InsertData(
                 table: "Branches",
-                columns: new[] { "ID", "BranchName", "CityID" },
+                columns: new[] { "ID", "BranchName", "CityID", "IsDeleted" },
                 values: new object[,]
                 {
-                    { 2, "فرع الحي السابع", 1 },
-                    { 3, "فرع عباس العقاد", 1 },
-                    { 4, "فرع التجمع الاول", 2 },
-                    { 5, "فرع سموحه", 5 },
-                    { 6, "فرع الشروق", 3 },
-                    { 7, "فرع العبور", 4 }
+                    { 1L, "فرع العبور", 4L, false },
+                    { 2L, "فرع الحي السابع", 1L, false },
+                    { 3L, "فرع عباس العقاد", 1L, false },
+                    { 4L, "فرع التجمع الاول", 2L, false },
+                    { 5L, "فرع سموحه", 5L, false },
+                    { 6L, "فرع الشروق", 3L, false }
                 });
 
             migrationBuilder.InsertData(
                 table: "Cashiers",
-                columns: new[] { "ID", "BranchID", "CashierName" },
+                columns: new[] { "ID", "BranchID", "CashierName", "IsDeleted" },
                 values: new object[,]
                 {
-                    { 1, 2, "محمد احمد" },
-                    { 2, 3, "محمود احمد محمد" },
-                    { 3, 2, "مصطفي عبد السميع" },
-                    { 4, 6, "احمد عبد الرحمن" },
-                    { 5, 4, "ساره عبد الله" }
+                    { 1L, 2L, "محمد احمد", false },
+                    { 2L, 3L, "محمود احمد ", false },
+                    { 3L, 2L, "مصطفي عبد السميع", false },
+                    { 4L, 6L, "احمد عبد الرحمن", false },
+                    { 5L, 4L, "ساره عبد الله", false },
+                    { 6L, 1L, "ساره محمد ", false }
                 });
 
             migrationBuilder.InsertData(
                 table: "InvoiceHeaders",
-                columns: new[] { "ID", "BranchID", "CashierID", "CustomerName", "Invoicedate" },
+                columns: new[] { "ID", "BranchID", "CashierID", "CustomerName", "Invoicedate", "IsDeleted" },
                 values: new object[,]
                 {
-                    { 2L, 2, 1, "محمد عبد الله", new DateTime(2022, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3L, 3, 2, "محمود احمد", new DateTime(2022, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 2L, 2L, 1L, "محمد عبد الله", new DateTime(2022, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), false },
+                    { 3L, 3L, 2L, "محمود احمد", new DateTime(2022, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), false }
                 });
 
             migrationBuilder.InsertData(
                 table: "InvoiceDetails",
-                columns: new[] { "ID", "InvoiceHeaderID", "ItemCount", "ItemName", "ItemPrice" },
+                columns: new[] { "ID", "InvoiceHeaderID", "IsDeleted", "ItemCount", "ItemName", "ItemPrice" },
                 values: new object[,]
                 {
-                    { 2L, 2L, 2.0, "بيبسي 1 لتر", 20.0 },
-                    { 3L, 2L, 2.0, "ساندوتش برجر", 50.0 },
-                    { 4L, 2L, 1.0, "ايس كريم", 10.0 },
-                    { 6L, 3L, 1.0, "سفن اب كانز", 5.0 }
+                    { 2L, 2L, false, 2.0, "بيبسي 1 لتر", 20.0 },
+                    { 3L, 2L, false, 2.0, "ساندوتش برجر", 50.0 },
+                    { 4L, 2L, false, 1.0, "ايس كريم", 10.0 },
+                    { 6L, 3L, false, 1.0, "سفن اب كانز", 5.0 }
                 });
 
             migrationBuilder.CreateIndex(
