@@ -23,16 +23,35 @@ namespace CashierFlow.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() =>
-            Ok(await _CashiersRepo.GetAllAsync());
+        public async Task<IActionResult> Get()
+        {
+
+            var cashiers = await _CashiersRepo.GetAllWithDetailsAsync();
+            var result = _mapper.Map<List<CashierDetailsDto>>(cashiers);
+            return Ok(result);
+        }
+         
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var Cashier = await _CashiersRepo.GetAsync(id);
-            if (Cashier == null) return NotFound();
-            return Ok(Cashier);
+            var cashier = await _CashiersRepo.GetWithDetailsAsync(id);
+            if (cashier == null) return NotFound();
+            var result = _mapper.Map<CashierDetailsDto>(cashier);
+
+            return Ok(result);
         }
+
+        [HttpGet("GetCashiersByBranch/{branchId}")]
+        public async Task<IActionResult> GetCashiersByBranch(long branchId)
+        {
+            var cashiers = await _CashiersRepo.GetAllByBranchAsync(branchId);
+            if (cashiers == null) return NotFound();
+            var result = _mapper.Map<List<CashierDetailsDto>>(cashiers);
+
+            return Ok(result);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CashierCreateDto CashierDto)

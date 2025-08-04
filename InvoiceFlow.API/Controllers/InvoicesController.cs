@@ -1,5 +1,7 @@
 ﻿
+using InvoiceFlow.Application.DTOs.Invoice;
 using InvoiceFlow.Application.Interfaces;
+using InvoiceFlow.Application.Service.Contract;
 using InvoiceFlow.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,48 +13,56 @@ namespace InvoiceFlow.API.Controllers
     public class InvoicesController : ControllerBase
     {
         private readonly IInvoiceRepo _invoicesRepo;
+        private readonly IInvoiceService _invoiceService;
 
-        public InvoicesController(IInvoiceRepo invoicesRepo)
+        public InvoicesController(IInvoiceRepo invoicesRepo , IInvoiceService invoiceService)
         {
-            _invoicesRepo =invoicesRepo;
+            _invoicesRepo = invoicesRepo;
+            _invoiceService = invoiceService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() =>
-            Ok(await _invoicesRepo.GetAllAsync());
+        public async Task<IActionResult> Get()
+        {
+            var invoices = await _invoicesRepo.GetAllWithDetailsAsync(); 
+            return Ok(invoices);
+        }
 
+  
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var invoice = await _invoicesRepo.GetAsync(id);
-            if (invoice == null) return NotFound();
+            var invoice = await _invoicesRepo.GetWithDetailsAsync(id); 
+            if (invoice == null)
+                return NotFound();
+
             return Ok(invoice);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] InvoiceHeader invoice)
-        {
-    
-            var created = await _invoicesRepo.AddAsync(invoice);
 
-            if (created == null)
-            {
-                return BadRequest();
-            }
-            return Ok(created);
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CreateInvoiceHeaderDto dto)
+        {
+            var createdInvoice = await _invoiceService.CreateInvoiceAsync(dto);
+            if (createdInvoice == null)
+                return BadRequest("Invalid invoice data or items not found.");
+
+            return Ok(createdInvoice);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(long id, [FromBody] InvoiceHeader invoice)
+        public async Task<IActionResult> Put(long id, [FromBody] UpdateInvoiceHeaderDto invoice)
         {
-            if (id != invoice.ID) return BadRequest();
-            var updated = await _invoicesRepo.UpdateAsync(id, invoice);
 
-            if (updated == null)
+            if (id != invoice.ID) return BadRequest();
+            var updatedInvoice = await _invoiceService.UpdateInvoiceAsync(invoice,id);
+
+            if (updatedInvoice == null)
             {
                 return BadRequest();
             }
-            return Ok(updated);
+            return Ok(updatedInvoice);
         }
 
         [HttpDelete("{id}")]

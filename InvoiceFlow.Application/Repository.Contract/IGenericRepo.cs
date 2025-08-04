@@ -11,6 +11,8 @@ namespace InvoiceFlow.Application.Interfaces
       
             Task<T?> GetAsync(long id);
             Task<IReadOnlyList<T>> GetAllAsync();
+        
+
             Task<bool> DeleteAsync(long id);
             Task<T?> UpdateAsync(long id, T entityToUpdate);
             Task<T?> AddAsync(T entity);

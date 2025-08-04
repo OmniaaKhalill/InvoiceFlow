@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InvoiceFlow.Application.Interfaces
 {
-    public interface ICashierRepo : IGenericRepo<Cashier>
+    public interface IItemRepo : IGenericRepo<Item>
     {
     }
 }

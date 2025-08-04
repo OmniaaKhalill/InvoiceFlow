@@ -1,7 +1,11 @@
 using InvoiceFlow.Application.Helpers;
 using InvoiceFlow.Application.Interfaces;
+using InvoiceFlow.Application.Repository.Contract;
+using InvoiceFlow.Application.Service.Contract;
+using InvoiceFlow.Domain.Entities;
 using InvoiceFlow.Infrastructure;
 using InvoiceFlow.Infrastructure.Repositories;
+using InvoiceFlow.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,17 +13,34 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(op=>op.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 builder.Services.AddScoped<ICashierRepo, CashierRepo>();
+builder.Services.AddScoped<IItemRepo, ItemRepo>();
+builder.Services.AddScoped<IBranchRepo, BranchRepo>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()   
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 
 
@@ -27,6 +48,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+app.UseCors("AllowAll");
 
 // Configure middleware pipeline
 if (app.Environment.IsDevelopment())
