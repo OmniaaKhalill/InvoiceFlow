@@ -38,7 +38,15 @@ namespace InvoiceFlow.Infrastructure.Services
 
             double total = 0;
 
-            foreach (var detailDto in dto.items)
+            var groupedItems = dto.items
+         .GroupBy(i => i.ItemID)
+         .Select(g => new
+         {
+             ItemID = g.Key,
+             TotalCount = g.Sum(x => x.ItemCount)
+         });
+
+            foreach (var detailDto in groupedItems)
             {
                 var item = await _itemRepo.GetAsync(detailDto.ItemID);
                 if (item == null)
@@ -47,10 +55,10 @@ namespace InvoiceFlow.Infrastructure.Services
                 var detail = new InvoiceDetail
                 {
                     ItemID = item.ID,
-                    ItemCount = detailDto.ItemCount
+                    ItemCount = detailDto.TotalCount
                 };
 
-                total += item.Price * detailDto.ItemCount;
+                total += item.Price * detailDto.TotalCount;
                 invoice.InvoiceDetails.Add(detail);
             }
 
@@ -67,50 +75,50 @@ namespace InvoiceFlow.Infrastructure.Services
                 return null;
 
             var existingInvoice = await _dbcontext.InvoiceHeaders
-        .Include(i => i.InvoiceDetails)
-        .FirstOrDefaultAsync(i => i.ID == id && !i.IsDeleted);
+                .Include(i => i.InvoiceDetails)
+                .FirstOrDefaultAsync(i => i.ID == id && !i.IsDeleted);
+
             if (existingInvoice == null)
                 return new InvoiceHeader { ID = 0 };
 
             double total = 0;
             var newDetails = new List<InvoiceDetail>();
 
-   
+            var groupedItems = dto.Items
+                .GroupBy(i => i.ItemID)
+                .Select(g => new
+                {
+                    ItemID = g.Key,
+                    TotalCount = g.Sum(x => x.ItemCount)
+                });
 
-            foreach (var detailDto in dto.Items)
+            foreach (var groupedItem in groupedItems)
             {
-                var item = await _itemRepo.GetAsync(detailDto.ItemID);
+                var item = await _itemRepo.GetAsync(groupedItem.ItemID);
                 if (item == null)
                     return null;
 
-                total += item.Price * detailDto.ItemCount;
+                total += item.Price * groupedItem.TotalCount;
 
                 newDetails.Add(new InvoiceDetail
                 {
                     ItemID = item.ID,
-                    ItemCount = detailDto.ItemCount,
-                    InvoiceHeaderID = existingInvoice.ID // important if not using cascade
+                    ItemCount = groupedItem.TotalCount,
+                    InvoiceHeaderID = existingInvoice.ID
                 });
             }
 
-         
             existingInvoice.CustomerName = dto.CustomerName;
             existingInvoice.CashierID = dto.CashierID;
             existingInvoice.BranchID = dto.BranchID;
             existingInvoice.Invoicedate = DateTime.Now;
             existingInvoice.TotalPrice = total;
 
-
             _dbcontext.InvoiceDetails.RemoveRange(existingInvoice.InvoiceDetails);
             existingInvoice.InvoiceDetails = newDetails;
 
             await _dbcontext.SaveChangesAsync();
             return existingInvoice;
-
-          
-
-           
-          
         }
 
 
