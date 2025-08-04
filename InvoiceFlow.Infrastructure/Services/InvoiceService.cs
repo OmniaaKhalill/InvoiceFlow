@@ -4,6 +4,7 @@ using InvoiceFlow.Application.DTOs.Item;
 using InvoiceFlow.Application.Interfaces;
 using InvoiceFlow.Application.Service.Contract;
 using InvoiceFlow.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,14 @@ namespace InvoiceFlow.Infrastructure.Services
         private readonly IInvoiceRepo _invoiceRepo;
         private readonly IItemRepo _itemRepo;
         private readonly IMapper _mapper;
+        private readonly AppDbContext _dbcontext;
 
-        public InvoiceService(IInvoiceRepo invoiceRepo, IItemRepo itemRepo, IMapper mapper)
+        public InvoiceService(IInvoiceRepo invoiceRepo, IItemRepo itemRepo, IMapper mapper, AppDbContext dbcontext)
         {
             _invoiceRepo = invoiceRepo;
             _itemRepo = itemRepo;
             _mapper = mapper;
+            _dbcontext = dbcontext;
         }
 
         public async Task<InvoiceHeader?> CreateInvoiceAsync(CreateInvoiceHeaderDto dto)
@@ -60,17 +63,21 @@ namespace InvoiceFlow.Infrastructure.Services
 
         public async Task<InvoiceHeader?> UpdateInvoiceAsync(UpdateInvoiceHeaderDto dto, long id)
         {
-            if (dto.InvoiceDetails == null || !dto.InvoiceDetails.Any())
+            if (dto.Items == null || !dto.Items.Any())
                 return null;
 
-            var existingInvoice = await _invoiceRepo.GetWithDetailsAsync(id);
+            var existingInvoice = await _dbcontext.InvoiceHeaders
+        .Include(i => i.InvoiceDetails)
+        .FirstOrDefaultAsync(i => i.ID == id && !i.IsDeleted);
             if (existingInvoice == null)
                 return new InvoiceHeader { ID = 0 };
 
             double total = 0;
-            var invoiceDetails = new List<InvoiceDetail>();
+            var newDetails = new List<InvoiceDetail>();
 
-            foreach (var detailDto in dto.InvoiceDetails)
+   
+
+            foreach (var detailDto in dto.Items)
             {
                 var item = await _itemRepo.GetAsync(detailDto.ItemID);
                 if (item == null)
@@ -78,24 +85,34 @@ namespace InvoiceFlow.Infrastructure.Services
 
                 total += item.Price * detailDto.ItemCount;
 
-                invoiceDetails.Add(new InvoiceDetail
+                newDetails.Add(new InvoiceDetail
                 {
                     ItemID = item.ID,
-                    ItemCount = detailDto.ItemCount
+                    ItemCount = detailDto.ItemCount,
+                    InvoiceHeaderID = existingInvoice.ID // important if not using cascade
                 });
             }
 
-            var updatedInvoice = new InvoiceHeader
-            {
-                ID = existingInvoice.ID, // preserve ID
-                CustomerName = dto.CustomerName,
-                Invoicedate = DateTime.Now,
-                TotalPrice = total,
-                InvoiceDetails = invoiceDetails
-            };
+         
+            existingInvoice.CustomerName = dto.CustomerName;
+            existingInvoice.CashierID = dto.CashierID;
+            existingInvoice.BranchID = dto.BranchID;
+            existingInvoice.Invoicedate = DateTime.Now;
+            existingInvoice.TotalPrice = total;
 
-            return await _invoiceRepo.UpdateAsync(id, updatedInvoice);
+
+            _dbcontext.InvoiceDetails.RemoveRange(existingInvoice.InvoiceDetails);
+            existingInvoice.InvoiceDetails = newDetails;
+
+            await _dbcontext.SaveChangesAsync();
+            return existingInvoice;
+
+          
+
+           
+          
         }
+
 
 
     }

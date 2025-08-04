@@ -38,7 +38,7 @@ namespace InvoiceFlow.Infrastructure.Repositories
                         Id = d.ItemID,
                         Name = d.Item.Name,
                         Price = d.Item.Price,
-                        Count = d.ItemCount
+                        Count =d.ItemCount
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();

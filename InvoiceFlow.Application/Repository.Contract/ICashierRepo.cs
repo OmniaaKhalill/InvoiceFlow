@@ -13,5 +13,6 @@ namespace InvoiceFlow.Application.Interfaces
 
         Task<Cashier?> GetWithDetailsAsync(long id);
         Task<IReadOnlyList<Cashier>> GetAllWithDetailsAsync();
+        Task<IReadOnlyList<Cashier>> GetAllByBranchAsync(long id);
     }
 }

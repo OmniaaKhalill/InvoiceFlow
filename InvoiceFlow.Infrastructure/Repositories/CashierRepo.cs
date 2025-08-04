@@ -34,10 +34,19 @@ namespace InvoiceFlow.Infrastructure.Repositories
         {
             return await _dbcontext.Cashiers 
                 .Include(i => i.Branch)
-                  .ThenInclude(b => b.City)
+                 .ThenInclude(b => b.City)
                 .Where(i => i.IsDeleted == false)
                 
                 .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<Cashier>> GetAllByBranchAsync(long id)
+        {
+            return await _dbcontext.Cashiers
+            
+              .Where(i => i.IsDeleted == false && i.BranchID==id)
+
+              .ToListAsync();
         }
     }
 

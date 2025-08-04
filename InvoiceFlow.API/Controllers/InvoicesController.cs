@@ -28,7 +28,7 @@ namespace InvoiceFlow.API.Controllers
             return Ok(invoices);
         }
 
-        // GET: api/Invoices/5
+  
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
@@ -54,6 +54,7 @@ namespace InvoiceFlow.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(long id, [FromBody] UpdateInvoiceHeaderDto invoice)
         {
+
             if (id != invoice.ID) return BadRequest();
             var updatedInvoice = await _invoiceService.UpdateInvoiceAsync(invoice,id);
 
