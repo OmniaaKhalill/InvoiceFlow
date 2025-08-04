@@ -19,7 +19,9 @@ namespace InvoiceFlow.Application.Helpers
             CreateMap<CashierCreateDto, Cashier>();
             CreateMap<CashierUpdateDto, Cashier>();
             CreateMap<Cashier, CashierDetailsDto>()
+           .ForMember(dest => dest.CashierID, opt => opt.MapFrom(src => src.ID))
            .ForMember(dest => dest.BranchName, opt => opt.MapFrom(src => src.Branch.BranchName))
+           .ForMember(dest => dest.BranchID, opt => opt.MapFrom(src => src.Branch.ID))
            .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.Branch.City.CityName));
 
 
@@ -28,6 +30,10 @@ namespace InvoiceFlow.Application.Helpers
 
             CreateMap<ItemCreateDto, Item>();
             CreateMap<ItemUpdateDto, Item>();
+            CreateMap<Item, ItemDetails>()
+                .ForMember(dest => dest.ItemID, opt => opt.MapFrom(src => src.ID))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));   
 
 
             CreateMap<CreateInvoiceDetailDto, InvoiceDetail>();
