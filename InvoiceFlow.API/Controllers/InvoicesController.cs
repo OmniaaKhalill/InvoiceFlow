@@ -22,16 +22,24 @@ namespace InvoiceFlow.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() =>
-            Ok(await _invoicesRepo.GetAllWithDetailsAsync());
+        public async Task<IActionResult> Get()
+        {
+            var invoices = await _invoicesRepo.GetAllWithDetailsAsync(); 
+            return Ok(invoices);
+        }
 
+        // GET: api/Invoices/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var invoice = await _invoicesRepo.GetWithDetailsAsync(id);
-            if (invoice == null) return NotFound();
+            var invoice = await _invoicesRepo.GetWithDetailsAsync(id); 
+            if (invoice == null)
+                return NotFound();
+
             return Ok(invoice);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateInvoiceHeaderDto dto)

@@ -14,7 +14,9 @@ namespace InvoiceFlow.Application.DTOs.Invoice
         public DateTime InvoiceDate { get; set; }
         public double TotalPrice { get; set; }
         public string CashierName { get; set; }
-        public List<ItemCountDto> ItemCounts { get; set; }
+        public string BranchName { get; set; }
+
+        public int ItemsCount { get; set; }
     }
 
 }

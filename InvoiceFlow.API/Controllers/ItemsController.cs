@@ -23,22 +23,26 @@ namespace InvoiceFlow.API.Controllers
             _itemsRepo = itemsRepo;
             _mapper = mapper;
         }
-
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var Items = await _itemsRepo.GetAllAsync();
-            var result = _mapper.Map<List<ItemDetails>>(Items);
+
+            var items = await _itemsRepo.GetAllAsync();
+            var result = _mapper.Map<List<ItemDetailsDto>>(items);
             return Ok(result);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var Item = await _itemsRepo.GetAsync(id);
-            var result = _mapper.Map<ItemDetails>(Item);
+            var item = await _itemsRepo.GetAsync(id);
+            if (item == null) return NotFound();
+            var result = _mapper.Map<ItemDetailsDto>(item);
+
             return Ok(result);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ItemCreateDto ItemDto)

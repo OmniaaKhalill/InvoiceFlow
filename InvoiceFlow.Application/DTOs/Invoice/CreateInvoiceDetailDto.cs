@@ -9,6 +9,7 @@ namespace InvoiceFlow.Application.DTOs.Invoice
     public class CreateInvoiceDetailDto
     {
         public long ItemID { get; set; }
+
         public int ItemCount { get; set; }
 
     }

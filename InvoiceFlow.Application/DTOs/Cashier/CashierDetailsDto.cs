@@ -10,7 +10,7 @@ namespace InvoiceFlow.Application.DTOs.Cashier
 {
     public class CashierDetailsDto
     {
-        public long CashierID { get; set; }
+        public long Id { get; set; }
         public string CashierName { get; set; }
         public string BranchName { get; set; }
 

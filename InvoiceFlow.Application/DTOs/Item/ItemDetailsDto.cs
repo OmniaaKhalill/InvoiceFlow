@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace InvoiceFlow.Application.DTOs.Item
 {
-    public class ItemCountDto
+    public class ItemDetailsDto
     {
-        public long ItemID { get; set; }
-        public string ItemName { get; set; }
-        public int ItemCount { get; set; }
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
     }
-
 }
