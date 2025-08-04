@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using InvoiceFlow.Application.DTOs.Cashier;
 using InvoiceFlow.Application.DTOs.Item;
 using InvoiceFlow.Application.Interfaces;
 using InvoiceFlow.Domain.Entities;
+using InvoiceFlow.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,18 +23,26 @@ namespace InvoiceFlow.API.Controllers
             _itemsRepo = itemsRepo;
             _mapper = mapper;
         }
-
         [HttpGet]
-        public async Task<IActionResult> Get() =>
-            Ok(await _itemsRepo.GetAllAsync());
+        public async Task<IActionResult> Get()
+        {
+
+            var items = await _itemsRepo.GetAllAsync();
+            var result = _mapper.Map<List<ItemDetailsDto>>(items);
+            return Ok(result);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var Item = await _itemsRepo.GetAsync(id);
-            if (Item == null) return NotFound();
-            return Ok(Item);
+            var item = await _itemsRepo.GetAsync(id);
+            if (item == null) return NotFound();
+            var result = _mapper.Map<ItemDetailsDto>(item);
+
+            return Ok(result);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ItemCreateDto ItemDto)

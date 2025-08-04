@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InvoiceFlow.Application.DTOs.Invoice;
+using InvoiceFlow.Application.DTOs.Item;
 using InvoiceFlow.Application.Interfaces;
 using InvoiceFlow.Application.Service.Contract;
 using InvoiceFlow.Domain.Entities;
@@ -26,7 +27,7 @@ namespace InvoiceFlow.Infrastructure.Services
 
         public async Task<InvoiceHeader?> CreateInvoiceAsync(CreateInvoiceHeaderDto dto)
         {
-            if (dto.InvoiceDetails == null || !dto.InvoiceDetails.Any())
+            if (dto.items == null || !dto.items.Any())
                 return null;
 
             var invoice = _mapper.Map<InvoiceHeader>(dto);
@@ -34,7 +35,7 @@ namespace InvoiceFlow.Infrastructure.Services
 
             double total = 0;
 
-            foreach (var detailDto in dto.InvoiceDetails)
+            foreach (var detailDto in dto.items)
             {
                 var item = await _itemRepo.GetAsync(detailDto.ItemID);
                 if (item == null)
@@ -62,11 +63,12 @@ namespace InvoiceFlow.Infrastructure.Services
             if (dto.InvoiceDetails == null || !dto.InvoiceDetails.Any())
                 return null;
 
-            var existingInvoice = await _invoiceRepo.GetWithDetailsAsync(id); 
+            var existingInvoice = await _invoiceRepo.GetWithDetailsAsync(id);
             if (existingInvoice == null)
                 return new InvoiceHeader { ID = 0 };
 
             double total = 0;
+            var invoiceDetails = new List<InvoiceDetail>();
 
             foreach (var detailDto in dto.InvoiceDetails)
             {
@@ -74,32 +76,26 @@ namespace InvoiceFlow.Infrastructure.Services
                 if (item == null)
                     return null;
 
-                var existingDetail = existingInvoice.InvoiceDetails
-                    .FirstOrDefault(d => d.ItemID == detailDto.ItemID);
-
-                if (existingDetail != null)
-                {
-                    existingDetail.ItemCount = detailDto.ItemCount;
-                }
-                else
-                {
-                    existingInvoice.InvoiceDetails.Add(new InvoiceDetail
-                    {
-                        ItemID = item.ID,
-                        ItemCount = detailDto.ItemCount
-                    });
-                }
-
                 total += item.Price * detailDto.ItemCount;
+
+                invoiceDetails.Add(new InvoiceDetail
+                {
+                    ItemID = item.ID,
+                    ItemCount = detailDto.ItemCount
+                });
             }
 
-            existingInvoice.TotalPrice = total;
-            existingInvoice.Invoicedate = DateTime.Now;
-            existingInvoice.CustomerName = dto.CustomerName;
+            var updatedInvoice = new InvoiceHeader
+            {
+                ID = existingInvoice.ID, // preserve ID
+                CustomerName = dto.CustomerName,
+                Invoicedate = DateTime.Now,
+                TotalPrice = total,
+                InvoiceDetails = invoiceDetails
+            };
 
-            return await _invoiceRepo.UpdateAsync(id, existingInvoice);
+            return await _invoiceRepo.UpdateAsync(id, updatedInvoice);
         }
-
 
 
     }

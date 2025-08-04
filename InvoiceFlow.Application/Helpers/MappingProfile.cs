@@ -23,8 +23,19 @@ namespace InvoiceFlow.Application.Helpers
            .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.Branch.City.CityName));
 
 
+            CreateMap<Item, ItemDetailsDto>()
+                .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ID))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
-            CreateMap<Branch, BranchDetailsDto>();
+
+
+            CreateMap<Branch, BranchDetailsDto>().
+                  ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.BranchName))
+                  .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ID));
+
+
+
 
             CreateMap<ItemCreateDto, Item>();
             CreateMap<ItemUpdateDto, Item>();
@@ -33,6 +44,20 @@ namespace InvoiceFlow.Application.Helpers
             CreateMap<CreateInvoiceDetailDto, InvoiceDetail>();
             CreateMap<CreateInvoiceHeaderDto, InvoiceHeader>();
             CreateMap<UpdateInvoiceHeaderDto, InvoiceHeader>();
+
+            CreateMap<InvoiceHeader, InvoiceDetailsDto>()
+    .ForMember(dest => dest.CashierName, opt => opt.MapFrom(src => src.Cashier.CashierName))
+    .ForMember(dest => dest.BranchName, opt => opt.MapFrom(src => src.Branch.BranchName))
+    .ForMember(dest => dest.Items, opt => opt.MapFrom(src =>
+        src.InvoiceDetails.Select(d => new ItemInvoiceDto
+        {
+            Id = d.ID,
+            Name = d.Item.Name,
+            Price = d.Item.Price,
+           Count  = d.ItemCount
+        }).ToList()
+    ));
+
 
 
 

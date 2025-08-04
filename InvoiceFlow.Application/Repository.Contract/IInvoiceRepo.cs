@@ -10,7 +10,7 @@ namespace InvoiceFlow.Application.Interfaces
 {
     public interface IInvoiceRepo : IGenericRepo<InvoiceHeader>
     {
-        Task<InvoiceHeader?> GetWithDetailsAsync(long id);
+        Task<InvoiceDetailsDto?> GetWithDetailsAsync(long id);
         Task<IReadOnlyList<InvoiceSummaryDto>> GetAllWithDetailsAsync();
     }
 

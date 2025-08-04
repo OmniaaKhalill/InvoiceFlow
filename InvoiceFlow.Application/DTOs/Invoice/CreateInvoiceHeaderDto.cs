@@ -12,7 +12,7 @@ namespace InvoiceFlow.Application.DTOs.Invoice
         public string CustomerName { get; set; }
         public long? CashierID { get; set; }
         public long BranchID { get; set; }
-        public List<CreateInvoiceDetailDto> InvoiceDetails { get; set; }
+        public List<CreateInvoiceDetailDto> items { get; set; }
 
 
     }

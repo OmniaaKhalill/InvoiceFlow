@@ -19,15 +19,32 @@ namespace InvoiceFlow.Infrastructure.Repositories
             _dbcontext = dbcontext;
         }
 
-        public async Task<InvoiceHeader?> GetWithDetailsAsync(long id)
+        public async Task<InvoiceDetailsDto?> GetWithDetailsAsync(long id)
         {
             return await _dbcontext.InvoiceHeaders
-                .Include(i => i.InvoiceDetails)
-                .Include(i => i.Cashier)
-                .Include(i => i.Branch)
-                    .ThenInclude(b => b.City)
-                .FirstOrDefaultAsync(i => i.ID == id && !i.IsDeleted);
+                .Where(i => i.ID == id && !i.IsDeleted)
+                .Select(i => new InvoiceDetailsDto
+                {
+                    ID = i.ID,
+                    CustomerName = i.CustomerName,
+                    InvoiceDate = i.Invoicedate,
+                    TotalPrice = i.TotalPrice,
+                    CashierID = i.CashierID,
+                    CashierName = i.Cashier.CashierName,
+                    BranchID = i.BranchID,
+                    BranchName = i.Branch.BranchName,
+                    Items = i.InvoiceDetails.Select(d => new ItemInvoiceDto
+                    {
+                        Id = d.ItemID,
+                        Name = d.Item.Name,
+                        Price = d.Item.Price,
+                        Count = d.ItemCount
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
         }
+
+        
 
 
         public async Task<IReadOnlyList<InvoiceSummaryDto>> GetAllWithDetailsAsync()
@@ -40,17 +57,13 @@ namespace InvoiceFlow.Infrastructure.Repositories
                     CustomerName = i.CustomerName,
                     InvoiceDate = i.Invoicedate,
                     TotalPrice = i.TotalPrice,
+                    BranchName = i.Branch.BranchName,
                     CashierName = i.Cashier.CashierName,
-                    ItemCounts = i.InvoiceDetails
-                        .Where(d => d.IsDeleted == false)
-                        .Select(d => new ItemCountDto
-                        {
-                            ItemID = d.ID,
-                            ItemName = d.Item.Name,
-                            ItemCount = d.ItemCount
-                        }).ToList()
-                })
-                .ToListAsync();
+                    ItemsCount = i.InvoiceDetails
+                        .Where(d => d.IsDeleted == false).Count()
+
+                }).ToListAsync();
+
         }
 
     }
